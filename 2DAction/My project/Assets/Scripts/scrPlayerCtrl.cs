@@ -122,7 +122,6 @@ public class scrPlayerCtrl : MonoBehaviour
                     SetSitColl(false);
                 }
                 SetGravity(0);
-                AniChange(State.Fallen);
             }
 
             ///////////// 점프 키 

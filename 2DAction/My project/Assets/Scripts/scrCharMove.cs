@@ -54,6 +54,10 @@ public class scrCharMove : MonoBehaviour
         {
             if (!isGround && hitGround)
             { GetComponent<scrPlayerCtrl>().ColliderBlock(); } 
+            else
+            {
+                if(isGround) isGround = false;
+            }
         }
 
 
