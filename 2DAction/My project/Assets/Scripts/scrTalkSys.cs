@@ -19,20 +19,27 @@ public class scrTalkSys : MonoBehaviour
     [SerializeField]string[] strTalk;
     [HideInInspector] public Quest quest;
     Transform[] trScg = new Transform[2];
+    Transform trLCam;
+    Transform trRCam;
+    Transform trSCG;
     Text txt;
     Text txtName;
-    Image imgLScg;
-    Image imgRScg; 
+    RawImage imgLScg;
+    RawImage imgRScg; 
     GameManager manager;
     private void Awake()
     {
         txt = transform.Find("imgTalkBox").Find("txtTalk").GetComponent<Text>();
         txtName= transform.Find("imgTalkBox").Find("txtName").GetComponent<Text>();
-        imgLScg= transform.Find("imgLScg").GetComponent< Image>();
-        imgRScg = transform.Find("imgRScg").GetComponent< Image>();
+        imgLScg= transform.Find("imgLScg").GetComponent<RawImage>();
+        imgRScg = transform.Find("imgRScg").GetComponent<RawImage>();
         trScg[0] = imgLScg.transform;
         trScg[1] = imgRScg.transform;
-        manager = transform.root.GetComponent<GameManager>(); 
+        manager = transform.root.GetComponent<GameManager>();
+        trLCam = manager.transform.Find("objSCGFolder").Find("LCamera");
+        trRCam = manager.transform.Find("objSCGFolder").Find("RCamera");
+        trSCG = manager.transform.Find("objSCGFolder").Find("objSCGFolder");
+
     }
     private void OnEnable()
     {
@@ -90,8 +97,11 @@ public class scrTalkSys : MonoBehaviour
     { 
         yield return new WaitForSeconds(0.1f);
         if (charKind[TalkCount] == CharKind.Player)
-        { 
-
+        {
+            Vector3 LPos = trSCG.GetChild(0).position;
+            LPos.y = 2.5f;
+            LPos.z = -10;
+            trLCam.position = LPos;
             ShowSCG[0] = true;
             LSCGPos = new Vector3(-600, -200, 0);
             RSCGPos = new Vector3(600 + (200), -200 + (-150), 0);
@@ -101,7 +111,12 @@ public class scrTalkSys : MonoBehaviour
         colLScg.a = ShowSCG[0] ? 1 : 0;
 
         if (charKind[TalkCount] != CharKind.Player)
-        { 
+        {
+            Vector3 RPos = trSCG.GetChild((int)charKind[TalkCount]).position;
+            RPos.y = 2.5f;
+            RPos.z = -10;
+            trRCam.position = RPos;
+
             ShowSCG[1] = true;
             LSCGPos = new Vector3(-600 + (-200), -200 + (-150), 0);
             RSCGPos = new Vector3(600, -200, 0);
