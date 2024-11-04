@@ -69,7 +69,11 @@ public class scrPlayerCtrl : MonoBehaviour
                 }
                 else if (manager.ReleaseHorizontal())//두 키 다 떼었을 때 
                 {
-                    if (CanDash) charMove.MoveSpd = 0;
+                    if (CanDash) 
+                    { 
+                        charMove.MoveSpd = 0;
+                        AniChange(State.Idle);
+                    }
                 }
             }
 
