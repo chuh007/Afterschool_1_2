@@ -396,6 +396,19 @@ public class GameManager : MonoBehaviour
                 if (!CanMenu) CanMenu = true;
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            transform.Find("objPlayer").GetComponent<scrPlayerCtrl>().ChangeCloth(0);
+        }
+        else if (Input.GetKeyDown(KeyCode.F2))
+        {
+            transform.Find("objPlayer").GetComponent<scrPlayerCtrl>().ChangeCloth(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.F3))
+        {
+            transform.Find("objPlayer").GetComponent<scrPlayerCtrl>().ChangeCloth(2);
+        }
     }
     public void SaveData() //저장
     {

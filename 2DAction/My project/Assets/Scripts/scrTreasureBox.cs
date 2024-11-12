@@ -33,7 +33,8 @@ public class scrTreasureBox : MonoBehaviour
         while (true)
         {
             if (evnt.Open && !Open)
-            { 
+            {
+                manager.GetComponent<scrSEManager>().CreateSound(transform.position, 6);
                 manager.playerInfo.OpenBoxIndex[BoxIndex] = true;
                 StartCoroutine(this.CreateMoney());
                 Open = true;

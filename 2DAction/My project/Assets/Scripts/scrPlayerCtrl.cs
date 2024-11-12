@@ -26,6 +26,8 @@ public class scrPlayerCtrl : MonoBehaviour
     Transform trMoveBlock;
     scrCharMove charMove;
     Animator ani;
+    Animator aniShadow;
+    scrAniSound aniSound;
     BoxCollider2D coll;
     Rigidbody2D rigid;
     scrObjPool objPool;
@@ -41,7 +43,9 @@ public class scrPlayerCtrl : MonoBehaviour
         coll = GetComponent<BoxCollider2D>();
         dem = GetComponent<scrDemCheck>();
         trSprite = this.transform.Find("Sprite");
-        ani = trSprite.Find("Sprite").GetComponent<Animator>(); 
+        ani = trSprite.Find("Sprite").GetComponent<Animator>();
+        aniSound = ani.GetComponent<scrAniSound>();
+        aniShadow = trSprite.Find("SpriteShadow").GetComponent<Animator>();
     }
     // Start is called before the first frame update
     void Start()
@@ -207,6 +211,11 @@ public class scrPlayerCtrl : MonoBehaviour
             AniCheck();
         }
     }
+
+    public void ChangeCloth(int cloth)
+    {
+        ani.SetInteger("Cloth", cloth);
+    }
     void Dash()
     {
         AniChange(State.Dash);
@@ -221,6 +230,7 @@ public class scrPlayerCtrl : MonoBehaviour
     }
     void Slide()
     {
+        aniSound.CreateSound(7);
         AniChange(State.Slide);
         charMove.MoveSpd = charMove.Look * 20;
         corResetDash = this.ResetDashDelay();
@@ -275,7 +285,8 @@ public class scrPlayerCtrl : MonoBehaviour
         }
     }
     IEnumerator AttackDelay()
-    { 
+    {
+        aniSound.CreateSound(10);
         AttAni(true);
         ani.SetInteger("AttCombo", AttackCombo); 
         yield return new WaitForSeconds(0.3f);
@@ -378,6 +389,8 @@ public class scrPlayerCtrl : MonoBehaviour
                 {
                     ani.SetBool("Jump", false); 
                     ani.SetFloat("FallSpd", 0); 
+                    aniShadow.SetBool("Jump", false);
+                    aniShadow.SetFloat("FallSpd", 0);
                 }
                 else
                 {
@@ -386,9 +399,11 @@ public class scrPlayerCtrl : MonoBehaviour
                         if (ani.GetBool("Sit"))
                         {
                             ani.SetBool("Sit", false); 
+                            aniShadow.SetBool("Sit", false);
                         }
                     }
                     ani.SetFloat("MoveSpd", 0); 
+                    aniShadow.SetFloat("MoveSpd", 0);
                 }
                 break;
             case State.Run:
@@ -397,9 +412,12 @@ public class scrPlayerCtrl : MonoBehaviour
                     if (ani.GetBool("Jump") && ani.GetFloat("FallSpd") < 0)
                     {
                         ani.SetBool("Jump", false); 
-                        ani.SetFloat("FallSpd", 0); 
+                        ani.SetFloat("FallSpd", 0);
+                        aniShadow.SetBool("Jump", false);
+                        aniShadow.SetFloat("FallSpd", 0);
                     }
                     ani.SetFloat("MoveSpd", 1); 
+                    aniShadow.SetFloat("MoveSpd", 1);
                 }
 
                 break;
@@ -408,6 +426,7 @@ public class scrPlayerCtrl : MonoBehaviour
                 if (!ani.GetBool("Dash"))
                 {
                     ani.SetBool("Dash", true); 
+                    aniShadow.SetBool("Dash", true);
                 }
                 break;
             case State.Jump:
@@ -415,13 +434,16 @@ public class scrPlayerCtrl : MonoBehaviour
                 if (!ani.GetBool("Jump"))
                 {
                     ani.SetBool("Jump", true); 
-                    ani.SetFloat("FallSpd", 1); 
+                    ani.SetFloat("FallSpd", 1);
+                    aniShadow.SetBool("Jump", true);
+                    aniShadow.SetFloat("FallSpd", 1);
                 }
                 break;
             case State.Fallen: 
                 if (!ani.GetBool("Jump"))
                 {
                     ani.SetBool("Jump", true); 
+                    aniShadow.SetBool("Jump", true);
                 }
                 ani.SetFloat("FallSpd", -1); 
                 break;
@@ -429,18 +451,21 @@ public class scrPlayerCtrl : MonoBehaviour
                 if (!ani.GetBool("Attack"))
                 {
                     ani.SetBool("Attack", true); 
+                    aniShadow.SetBool("Attack", true);
                 }
                 break;
             case State.Die:
                 if (!ani.GetBool("Die"))
                 {
                     ani.SetBool("Die", true); 
+                    aniShadow.SetBool("Die", true);
                 }
                 break;
             case State.Sit:
                 if (!ani.GetBool("Sit"))
                 {
                     ani.SetBool("Sit", true); 
+                    aniShadow.SetBool("Sit", true);
                 }
                 break;
         }
@@ -462,6 +487,7 @@ public class scrPlayerCtrl : MonoBehaviour
             charMove.isGround = true;
             if (JumpCount > 0) JumpCount = 0;
             ani.SetBool("Jump", false);
+            aniShadow.SetBool("Jump", false);
             rigid.velocity = new Vector2(0, -2);//---
             CanJump = true;
             SetGravity(0);
@@ -486,7 +512,8 @@ public class scrPlayerCtrl : MonoBehaviour
             collision.GetComponent<scrSceneMove>().SceneGoto();
         }
         else if (collision.gameObject.tag == "Exp")
-        { 
+        {
+            aniSound.CreateSound(8);
             playerInfo.Exp++;
             Vector3 posEff = transform.position + (transform.position - collision.transform.position) / 2; 
             objPool.CreateGetEff(posEff);
@@ -513,6 +540,7 @@ public class scrPlayerCtrl : MonoBehaviour
         }
         if (collision.gameObject.tag == "Money")
         {
+            aniSound.CreateSound(5);
             objPool.CreateMoneyEff(collision.contacts[0].point);
             manager.SetMoney(collision.transform.GetComponent<scrMoney>().Money); 
             collision.gameObject.SetActive(false);

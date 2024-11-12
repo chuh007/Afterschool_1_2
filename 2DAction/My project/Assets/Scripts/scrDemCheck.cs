@@ -22,6 +22,7 @@ public class scrDemCheck : MonoBehaviour
     Transform trDem;
     Transform trHpEnd;
     Animator ani;
+    Animator aniShadow;
     scrObjPool objPool;
     GameManager manager;
     [SerializeField] GameObject objCanvas;
@@ -30,7 +31,9 @@ public class scrDemCheck : MonoBehaviour
         charMove = GetComponent<scrCharMove>();
         ani = transform.Find("Sprite").Find("Sprite").GetComponent<Animator>();
         if (charKind == CharKind.Player)
-        { }
+        { 
+            aniShadow = transform.Find("Sprite").Find("SpriteShadow").GetComponent<Animator>();
+        }
     }
     void OnEnable()
     {
@@ -157,7 +160,9 @@ public class scrDemCheck : MonoBehaviour
             {
                 ani.SetBool("Damage", false);
                 if (charKind == CharKind.Player)
-                { }
+                {
+                    aniShadow.SetBool("Damage", false);
+                }
 
             }
             if (charKind == CharKind.Enemy)
